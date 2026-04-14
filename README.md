@@ -15,23 +15,27 @@ Copia variables de ejemplo:
 cp .env.example .env
 ```
 
-| Variable        | Descripción |
-|----------------|-------------|
-| `PORT`         | Puerto HTTP (por defecto `3000`) |
-| `USER_AGENT`   | Cabecera `User-Agent` hacia GitHub (obligatorio para la API) |
-| `GITHUB_TOKEN` | Opcional: token personal para reducir límites de rate |
+
+| Variable       | Descripción                                                                 |
+| -------------- | --------------------------------------------------------------------------- |
+| `PORT`         | Puerto HTTP (por defecto `3000`)                                            |
+| `USER_AGENT`   | Cabecera `User-Agent` hacia GitHub ( por defecto **wc-technicaltest-backend** ) |
+| `GITHUB_TOKEN` | Opcional: token personal para reducir límites de rate                       |
+
 
 ## Scripts
 
-| Comando           | Uso |
-|-------------------|-----|
-| `npm run start:dev` | Desarrollo con recarga |
-| `npm run build`     | Compilación |
-| `npm run start:prod` | Producción (`node dist/main`) |
-| `npm run test`      | Tests unitarios |
-| `npm run test:e2e`  | Tests end-to-end |
-| `npm run lint`      | ESLint con corrección automática |
-| `npm run format`    | Prettier |
+
+| Comando              | Uso                              |
+| -------------------- | -------------------------------- |
+| `npm run start:dev`  | Desarrollo con recarga           |
+| `npm run build`      | Compilación                      |
+| `npm run start:prod` | Producción (`node dist/main`)    |
+| `npm run test`       | Tests unitarios                  |
+| `npm run test:e2e`   | Tests end-to-end                 |
+| `npm run lint`       | ESLint con corrección automática |
+| `npm run format`     | Prettier                         |
+
 
 ## Ejecutar en local
 
@@ -52,11 +56,13 @@ Ahí puedes probar `GET /health`, `GET /profiles/{username}` y `GET /metrics/{us
 
 ## Endpoints (resumen)
 
-| Método | Ruta | Descripción |
-|--------|------|-------------|
-| `GET` | `/health` | Estado del servicio |
-| `GET` | `/profiles/:username` | Perfil resumido (login, nombre, avatar, bio, repos públicos, seguidores, enlace) |
-| `GET` | `/metrics/:username` | Métricas: `totalStars`, `followersToReposRatio`, `lastPushDaysAgo`, `topLanguage` |
+
+| Método | Ruta                  | Descripción                                                                       |
+| ------ | --------------------- | --------------------------------------------------------------------------------- |
+| `GET`  | `/health`             | Estado del servicio                                                               |
+| `GET`  | `/profiles/:username` | Perfil resumido (login, nombre, avatar, bio, repos públicos, seguidores, enlace)  |
+| `GET`  | `/metrics/:username`  | Métricas: `totalStars`, `followersToReposRatio`, `lastPushDaysAgo`, `topLanguage` |
+
 
 ## Ejemplos con curl
 
@@ -78,19 +84,22 @@ Misma API en el puerto configurado (por defecto `3000`).
 
 El proyecto está organizado por módulo de negocio (`github`) con capas hexagonales internas:
 
-- **`src/github/domain`**: tipos, puertos (`GithubPort`, `CachePort`) y servicios puros (`computeGithubMetricsSummary`, `buildProfileSummary`).
-- **`src/github/application/use-cases`**: orquestación de casos de uso, caché y logging.
-- **`src/github/infrastructure/adapters/in`**: adaptadores de entrada HTTP (controllers + DTOs).
-- **`src/github/infrastructure/adapters/out`**: adaptadores de salida (GitHub HTTP con Axios y caché en memoria).
-- **`src/github/composition`**: tokens de DI (`GITHUB_PORT`, `CACHE_PORT`) y wiring del módulo.
-- **`src/health.controller.ts`**: endpoint transversal de salud del servicio.
+- `**src/github/domain**`: tipos, puertos (`GithubPort`, `CachePort`) y servicios puros (`computeGithubMetricsSummary`, `buildProfileSummary`).
+- `**src/github/application/use-cases**`: orquestación de casos de uso, caché y logging.
+- `**src/github/infrastructure/adapters/in**`: adaptadores de entrada HTTP (controllers + DTOs).
+- `**src/github/infrastructure/adapters/out**`: adaptadores de salida (GitHub HTTP con Axios y caché en memoria).
+- `**src/github/composition**`: tokens de DI (`GITHUB_PORT`, `CACHE_PORT`) y wiring del módulo.
+- `**src/health.controller.ts**`: endpoint transversal de salud del servicio.
 
 Elegí organizar la solución por **módulo de negocio** para mantener juntas las capas de un mismo contexto funcional y reducir acoplamiento entre features. Esta estructura facilita ubicar responsabilidades (entrada, orquestación, dominio y salida), mejora la mantenibilidad cuando crece el proyecto y permite reemplazar adaptadores (por ejemplo cache o cliente HTTP) con impacto mínimo en la lógica de negocio.
 
 ## Errores HTTP
 
-| Código | Caso |
-|--------|------|
-| 404 | Usuario no existe en GitHub |
-| 429 | Límite de peticiones (o respuesta equivalente de GitHub) |
-| 503 | Fallo al comunicar con GitHub u otro error externo |
+
+| Código | Caso                                                     |
+| ------ | -------------------------------------------------------- |
+| 404    | Usuario no existe en GitHub                              |
+| 429    | Límite de peticiones (o respuesta equivalente de GitHub) |
+| 503    | Fallo al comunicar con GitHub u otro error externo       |
+
+
